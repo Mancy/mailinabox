@@ -86,8 +86,8 @@ fi
 # text search plugin for (and by) dovecot, which is not available in
 # Ubuntu currently.
 
-hide_output add-apt-repository -y ppa:mail-in-a-box/ppa
-hide_output add-apt-repository -y ppa:certbot/certbot
+#hide_output add-apt-repository -y ppa:mail-in-a-box/ppa
+#hide_output add-apt-repository -y ppa:certbot/certbot
 
 # ### Update Packages
 
@@ -134,19 +134,19 @@ apt_install python3 python3-dev python3-pip \
 # The PPA is located here https://launchpad.net/%7Eondrej/+archive/ubuntu/php
 # Unattended upgrades are activated for the repository If it appears it's already
 # installed, don't do it again so we can avoid an unnecessary call to apt-get update.
-if [ ! -f /etc/apt/sources.list.d/ondrej-php-trusty.list ]; then
-hide_output add-apt-repository -y ppa:ondrej/php
-apt_add_repository_to_unattended_upgrades LP-PPA-ondrej-php:trusty
-hide_output apt-get update
-fi
+#if [ ! -f /etc/apt/sources.list.d/ondrej-php-trusty.list ]; then
+#hide_output add-apt-repository -y ppa:ondrej/php
+#apt_add_repository_to_unattended_upgrades LP-PPA-ondrej-php:trusty
+#hide_output apt-get update
+#fi
 
 # ### Suppress Upgrade Prompts
 # Since Mail-in-a-Box might jump straight to 18.04 LTS, there's no need
 # to be reminded about 16.04 on every login.
-if [ -f /etc/update-manager/release-upgrades ]; then
-	tools/editconf.py /etc/update-manager/release-upgrades Prompt=never
-	rm -f /var/lib/ubuntu-release-upgrader/release-upgrade-available
-fi
+#if [ -f /etc/update-manager/release-upgrades ]; then
+#	tools/editconf.py /etc/update-manager/release-upgrades Prompt=never
+#	rm -f /var/lib/ubuntu-release-upgrader/release-upgrade-available
+#fi
 
 # ### Set the system timezone
 #
@@ -324,7 +324,14 @@ fi
 restart_service bind9
 restart_service resolvconf
 
+# check nginx
+if [ ! -f touch /var/log/nginx/access.log  ]; then
+	echo 'installing Nginx…'
+    apt_install nginx
+fi
+
 # ### Fail2Ban Service
+touch /var/log/mail.log /var/log/mail.warn
 
 # Configure the Fail2Ban installation to prevent dumb bruce-force attacks against dovecot, postfix, ssh, etc.
 rm -f /etc/fail2ban/jail.local # we used to use this file but don't anymore
