@@ -52,12 +52,10 @@ tools/editconf.py /etc/php/7.0/fpm/php.ini -c ';' \
         default_charset="UTF-8"
 
 # Switch from the dynamic process manager to the ondemand manager see #1216
-tools/editconf.py /etc/php/7.0/fpm/pool.d/www.conf -c ';' \
-	pm=ondemand
+sed -i 's/pm = dynamic/pm=ondemand/g' /etc/php/7.0/fpm/pool.d/www.conf
 
 # Bump up PHP's max_children to support more concurrent connections
-tools/editconf.py /etc/php/7.0/fpm/pool.d/www.conf -c ';' \
-	pm.max_children=8
+sed -i 's/pm.max_children = 5/pm.max_children = 8/g' /etc/php/7.0/fpm/pool.d/www.conf
 
 # Other nginx settings will be configured by the management service
 # since it depends on what domains we're serving, which we don't know
