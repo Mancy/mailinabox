@@ -6,18 +6,6 @@ echo "Installing Mail-in-a-Box system management daemon..."
 
 # DEPENDENCIES
 
-# We used to install management daemon-related Python packages
-# directly to /usr/local/lib. We moved to a virtualenv because
-# these packages might conflict with apt-installed packages.
-# We may have a lingering version of acme that conflcits with
-# certbot, which we're about to install below, so remove it
-# first. Once acme is installed by an apt package, this might
-# break the package version and `apt-get install --reinstall python3-acme`
-# might be needed in that case.
-while [ -d /usr/local/lib/python3.4/dist-packages/acme ]; do
-	pip3 uninstall -y acme;
-done
-
 # duplicity is used to make backups of user data. It uses boto
 # (via Python 2) to do backups to AWS S3. boto from the Ubuntu
 # package manager is too out-of-date -- it doesn't support the newer
@@ -30,7 +18,7 @@ done
 # certbot installs EFF's certbot which we use to
 # provision free TLS certificates.
 apt_install duplicity python-pip python-virtualenv certbot
-hide_output pip2 install --upgrade boto
+hide_output pip3 install --upgrade boto
 
 # Create a virtualenv for the installation of Python 3 packages
 # used by the management daemon.
